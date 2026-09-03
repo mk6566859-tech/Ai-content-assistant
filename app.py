@@ -186,10 +186,16 @@ Important instructions:
             "Creating your content..."
         ):
 
-            response = client.models.generate_content(
-                model="gemini-2.5-flash",
-                contents=prompt
+            # response = client.models.generate_content(
+            #     model="gemini-2.5-flash",
+            #     contents=prompt
+            # )
+            response = client.interactions.create(
+            model="gemini-3.6-flash",
+            input=prompt
             )
+
+generated_content = response.output_text
 
 
         generated_content = response.text
