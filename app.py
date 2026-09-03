@@ -1,5 +1,5 @@
 import streamlit as st
-from openai import OpenAI
+from groq import Groq
 
 
 # -----------------------------
@@ -14,13 +14,13 @@ st.set_page_config(
 
 
 # -----------------------------
-# API configuration
+# Groq configuration
 # -----------------------------
 
 try:
-    API_KEY = st.secrets["OPENAI_API_KEY"]
+    GROQ_API_KEY = st.secrets["GROQ_API_KEY"]
 except Exception:
-    API_KEY = None
+    GROQ_API_KEY = None
 
 
 # -----------------------------
@@ -31,7 +31,7 @@ st.title("✍️ AI Content Assistant")
 
 st.write(
     "Create ready-to-publish social media content "
-    "with GPT-OSS-120B."
+    "with AI."
 )
 
 
@@ -113,17 +113,16 @@ if st.button(
         )
         st.stop()
 
-    if not API_KEY:
+    if not GROQ_API_KEY:
         st.error(
-            "API key is not configured."
+            "Groq API key is not configured in st.secrets."
         )
         st.stop()
 
     try:
-        # Initialize standard OpenAI client 
-        # (If using OpenRouter or another gateway, change base_url accordingly)
-        client = OpenAI(
-            api_key=API_KEY
+        # Initialize Groq client
+        client = Groq(
+            api_key=GROQ_API_KEY
         )
 
         prompt = f"""
@@ -172,16 +171,19 @@ Important instructions:
 """
 
         with st.spinner(
-            "Creating your content with GPT-OSS-120B..."
+            "Creating your content with GPT-OSS 120B..."
         ):
-            response = client.chat.completions.create(
-                model="openai/gpt-oss-120b",  # Adjust model tag if routing via OpenRouter or native endpoint
+            chat_completion = client.chat.completions.create(
+                model="openai/gpt-oss-120b",
                 messages=[
-                    {"role": "user", "content": prompt}
+                    {
+                        "role": "user",
+                        "content": prompt
+                    }
                 ]
             )
 
-        generated_content = response.choices[0].message.content
+        generated_content = chat_completion.choices[0].message.content
 
         st.success(
             "Content generated successfully!"
