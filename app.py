@@ -1,4 +1,3 @@
-
 import streamlit as st
 from google import genai
 
@@ -105,36 +104,25 @@ if st.button(
 ):
 
     if not topic.strip():
-
         st.warning("Please enter a topic.")
-
         st.stop()
 
-
     if not target_audience.strip():
-
         st.warning(
             "Please enter a target audience."
         )
-
         st.stop()
 
-
     if not GEMINI_API_KEY:
-
         st.error(
             "Gemini API key is not configured."
         )
-
         st.stop()
 
-
     try:
-
         client = genai.Client(
             api_key=GEMINI_API_KEY
         )
-
 
         prompt = f"""
 You are an expert social media content writer.
@@ -181,33 +169,21 @@ Important instructions:
 - Keep the content ready to copy and paste.
 """
 
-
         with st.spinner(
             "Creating your content..."
         ):
-
-            # response = client.models.generate_content(
-            #     model="gemini-2.5-flash",
-            #     contents=prompt
-            # )
-            response = client.interactions.create(
-            model="gemini-3.6-flash",
-            input=prompt
+            response = client.models.generate_content(
+                model="gemini-2.5-flash",
+                contents=prompt
             )
 
-generated_content = response.output_text
-
-
-        # generated_content = response.text
-
+        generated_content = response.text
 
         st.success(
             "Content generated successfully!"
         )
 
-
         st.subheader("Generated Content")
-
 
         st.text_area(
             "Your content",
@@ -215,9 +191,7 @@ generated_content = response.output_text
             height=500
         )
 
-
     except Exception as e:
-
         st.error(
             f"Something went wrong: {e}"
         )
