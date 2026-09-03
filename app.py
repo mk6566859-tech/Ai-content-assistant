@@ -195,7 +195,7 @@ Important instructions:
             input=prompt
             )
 
-# generated_content = response.output_text
+generated_content = response.output_text
 
 
         generated_content = response.text
