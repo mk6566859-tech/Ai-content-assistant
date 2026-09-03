@@ -1,5 +1,5 @@
 import streamlit as st
-from google import genai
+from openai import OpenAI
 
 
 # -----------------------------
@@ -14,13 +14,13 @@ st.set_page_config(
 
 
 # -----------------------------
-# Gemini configuration
+# API configuration
 # -----------------------------
 
 try:
-    GEMINI_API_KEY = st.secrets["GEMINI_API_KEY"]
+    API_KEY = st.secrets["OPENAI_API_KEY"]
 except Exception:
-    GEMINI_API_KEY = None
+    API_KEY = None
 
 
 # -----------------------------
@@ -31,7 +31,7 @@ st.title("✍️ AI Content Assistant")
 
 st.write(
     "Create ready-to-publish social media content "
-    "with AI."
+    "with GPT-OSS-120B."
 )
 
 
@@ -113,15 +113,17 @@ if st.button(
         )
         st.stop()
 
-    if not GEMINI_API_KEY:
+    if not API_KEY:
         st.error(
-            "Gemini API key is not configured."
+            "API key is not configured."
         )
         st.stop()
 
     try:
-        client = genai.Client(
-            api_key=GEMINI_API_KEY
+        # Initialize standard OpenAI client 
+        # (If using OpenRouter or another gateway, change base_url accordingly)
+        client = OpenAI(
+            api_key=API_KEY
         )
 
         prompt = f"""
@@ -170,14 +172,16 @@ Important instructions:
 """
 
         with st.spinner(
-            "Creating your content..."
+            "Creating your content with GPT-OSS-120B..."
         ):
-            response = client.models.generate_content(
-                model="gemini-3.6-flash",
-                contents=prompt
+            response = client.chat.completions.create(
+                model="openai/gpt-oss-120b",  # Adjust model tag if routing via OpenRouter or native endpoint
+                messages=[
+                    {"role": "user", "content": prompt}
+                ]
             )
 
-        generated_content = response.text
+        generated_content = response.choices[0].message.content
 
         st.success(
             "Content generated successfully!"
